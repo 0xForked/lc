@@ -28,43 +28,43 @@ func main() {
 		return
 	}
 
-	if len(args) > 1 {
-		lenReadFile := len(args) > 2
-		lenWriteFile := len(args) > 4
+	if contains(helpFlag, args[1]) {
+		log.Println("show help flags")
+		// TODO REGISTER NEW FUNCTION THAT SHOW HELP OPTIONS
+		return
+	}
 
-		if contains(helpFlag, args[1]) {
-			log.Println("show help flags")
-			// TODO REGISTER NEW FUNCTION THAT SHOW HELP OPTIONS
-			return
-		}
-
-		for i, arg := range args {
-			switch {
-			case contains(fileFlag, arg) && lenReadFile:
-				fileDir = args[i+1]
-			case contains(extensionFlag, arg) && lenWriteFile:
-				fileExt = args[i+1]
-			case contains(outputFlag, arg) && lenWriteFile:
-				fileOutDir = args[i+1]
-			}
-		}
-
-		if fileDir != "" {
-			data := readFileContents(fileDir)
-			if data == nil {
-				log.Println("cannot proceed log data")
-				return
-			}
-
-			err := writeFileContent(fileExt, fileOutDir, data)
-			if err != nil {
-				log.Println("failed to create file")
-				return
-			}
-
-			log.Printf("new file created at %s/log.%s", fileOutDir, fileExt)
+	lenReadFile := len(args) > 2
+	lenWriteFile := len(args) > 4
+	for i, arg := range args {
+		switch {
+		case contains(fileFlag, arg) && lenReadFile:
+			fileDir = args[i+1]
+		case contains(extensionFlag, arg) && lenWriteFile:
+			fileExt = args[i+1]
+		case contains(outputFlag, arg) && lenWriteFile:
+			fileOutDir = args[i+1]
 		}
 	}
+
+	if fileDir == "" {
+		log.Println("file path not provided")
+		return
+	}
+		
+	data := readFileContents(fileDir)
+	if data == nil {
+		log.Println("cannot proceed log data")
+		return
+	}
+
+	err := writeFileContent(fileExt, fileOutDir, data)
+	if err != nil {
+		log.Println("failed to create file")
+		return
+	}
+
+	log.Printf("new file created at %s/log.%s", fileOutDir, fileExt)
 }
 
 func contains(elements []string, element string) bool {
